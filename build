@@ -1,47 +1,47 @@
 #!/bin/bash -l
 function buildBinary(){
-	docker.io run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
-	if [[ $? = 0 ]]; then
-		echo "Build successful."
-	else
-		echo "Seems like the build failed."
-	fi
-	cp $TARGETFOLDER/dist/electrum.exe $(pwd)/releases/electrum-$VERSION.exe
-	echo "You can find electrum-$VERSION.exe in the releases folder."
+  docker.io run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
+  if [[ $? = 0 ]]; then
+    echo "Build successful."
+  else
+    echo "Seems like the build failed. Exiting."
+    exit
+  fi
+  cp $TARGETFOLDER/dist/electrum.exe $(pwd)/releases/electrum-$VERSION.exe
+  echo "You can find electrum-$VERSION.exe in the releases folder."
 
 }
 
 function buildImage(){
-	echo "Building image"
-	docker.io build -t electrum-winbuild .
+  echo "Building image"
+  docker.io build -t electrum-winbuild .
 }
-function prepareFile(){
-	echo "Preparing file for Electrum version $VERSION"
-	if [ -e "$TARGETPATH" ]
-	then
-		echo "Version tar already downloaded."
-	else
-		wget https://download.electrum.org/$FILENAME -O $TARGETPATH
-	fi
 
-	if [ -d "$TARGETFOLDER" ]
-	then
-		echo "Version is already extracted"
-	else
-		tar -xvf $TARGETPATH
-	fi
+function prepareFile(){
+  echo "Preparing file for Electrum version $VERSION"
+  if [ -e "$TARGETPATH" ]; then
+    echo "Version tar already downloaded."
+  else
+    wget https://download.electrum.org/$FILENAME -O $TARGETPATH
+  fi
+
+  if [ -d "$TARGETFOLDER" ]; then
+    echo "Version is already extracted"
+  else
+    tar -xvf $TARGETPATH -C $(pwd)/source
+  fi
 }
-if [[ $# -gt 0 ]]
-then
-	VERSION=$1
-	FILENAME=Electrum-$VERSION.tar.gz
-	TARGETPATH=$(pwd)/source/$FILENAME
-	TARGETFOLDER=$(pwd)/source/Electrum-$VERSION
-	echo "Building Electrum $VERSION from $FILENAME"
+
+if [[ $# -gt 0 ]]; then
+  VERSION=$1
+  FILENAME=Electrum-$VERSION.tar.gz
+  TARGETPATH=$(pwd)/source/$FILENAME
+  TARGETFOLDER=$(pwd)/source/Electrum-$VERSION
+  echo "Building Electrum $VERSION from $FILENAME"
 else
-	echo "Usage: ./build <version>."
-	echo "For example: ./build 1.9.8"
-	exit
+  echo "Usage: ./build <version>."
+  echo "For example: ./build 1.9.8"
+  exit
 fi
 
 # Build docker image
