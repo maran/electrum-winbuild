@@ -44,6 +44,23 @@ else
   exit
 fi
 
+which docker
+if [[ $? = 0 ]]; then
+  DOCKERBIN=$(which docker)
+fi
+
+which docker.io
+if [[ $? = 0 ]]; then
+  DOCKERBIN=$(which docker.io)
+fi
+
+if [[ -z "$DOCKERBIN" ]]; then
+        echo "Could not find docker binary, exiting"
+        exit
+else
+        echo "Using docker at $DOCKERBIN"
+fi
+
 # Build docker image
 buildImage
 
