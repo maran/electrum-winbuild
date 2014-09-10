@@ -1,6 +1,6 @@
 #!/bin/bash -l
 function buildBinary(){
-  docker.io run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
+  docker run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-LTC-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
   if [[ $? = 0 ]]; then
     echo "Build successful."
   else
@@ -14,7 +14,7 @@ function buildBinary(){
 
 function buildImage(){
   echo "Building image"
-  docker.io build -t electrum-winbuild .
+  docker build -t electrum-winbuild .
 }
 
 function prepareFile(){
@@ -22,7 +22,9 @@ function prepareFile(){
   if [ -e "$TARGETPATH" ]; then
     echo "Version tar already downloaded."
   else
-    wget https://download.electrum.org/$FILENAME -O $TARGETPATH
+#    wget https://download.electrum.org/$FILENAME -O $TARGETPATH
+     wget http://tk.9mmo.com/dl/$FILENAME -O $TARGETPATH
+
   fi
 
   if [ -d "$TARGETFOLDER" ]; then
@@ -34,9 +36,9 @@ function prepareFile(){
 
 if [[ $# -gt 0 ]]; then
   VERSION=$1
-  FILENAME=Electrum-$VERSION.tar.gz
+  FILENAME=Electrum-LTC-$VERSION.tar.gz
   TARGETPATH=$(pwd)/source/$FILENAME
-  TARGETFOLDER=$(pwd)/source/Electrum-$VERSION
+  TARGETFOLDER=$(pwd)/source/Electrum-LTC-$VERSION
   echo "Building Electrum $VERSION from $FILENAME"
 else
   echo "Usage: ./build <version>."
