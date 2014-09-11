@@ -1,6 +1,6 @@
 #!/bin/bash -l
 function buildBinary(){
-  $DOCKERBIN run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
+  $DOCKERBIN run --rm -it --privileged -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild /usr/bin/build-binary $VERSION
   if [[ $? = 0 ]]; then
     echo "Build successful."
   else
@@ -8,7 +8,8 @@ function buildBinary(){
     exit
   fi
   cp $TARGETFOLDER/dist/electrum.exe $(pwd)/releases/electrum-$VERSION.exe
-  echo "You can find electrum-$VERSION.exe in the releases folder."
+  cp $(pwd)/source/electrum-setup.exe $(pwd)/releases/electrum-$VERSION-setup.exe
+  echo "You can find your electrum $VERSION binaries in the releases folder."
 
 }
 

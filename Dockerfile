@@ -25,7 +25,7 @@ RUN export WINEPREFIX=/opt/wine-electrum
 
 ENV ELECTRUM_PATH $WINE_PREFIX/drive_c/electrum
 ENV PYHOME c:/Python27
-ENV PYTHON wine $PYHOME/python.exe -OO -B
+ENV PYTHON xvfb-run -a wine $PYHOME/python.exe -B
 ENV PIP $PYTHON -m pip
 
 # Only needed for debugging
@@ -55,5 +55,13 @@ RUN xvfb-run -a wine PyQt.exe /S
 
 VOLUME ["/opt/wine-electrum/drive_c/electrum"]
 
+RUN wget -q -O nsis.exe $NSIS_URL
+RUN xvfb-run -a wine nsis.exe /S
+
 # Pip not needed for releases
 #RUN wget -q -O - https://raw.github.com/pypa/pip/master/contrib/get-pip.py | $PYTHON
+
+ADD ./helpers/build-binary /usr/bin/build-binary
+
+# Clean up stale wine processes
+RUN rm -rf /opt/.wine-*
