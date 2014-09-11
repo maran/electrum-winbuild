@@ -51,12 +51,12 @@ RUN cp -r SCRIPTS/* $WINEPREFIX/drive_c/Python27/Scripts/
 RUN $PYTHON $PYHOME/Scripts/pywin32_postinstall.py -install
 
 RUN wget -O PyQt.exe "$PYQT4_URL"
-RUN xvfb-run -a wine PyQt.exe /S
+RUN rm -rf /tmp/.wine-* && xvfb-run -a wine PyQt.exe /S
 
 VOLUME ["/opt/wine-electrum/drive_c/electrum"]
 
 RUN wget -q -O nsis.exe $NSIS_URL
-RUN xvfb-run -a wine nsis.exe /S
+RUN rm -rf /tmp/.wine-* && xvfb-run -a wine nsis.exe /S
 
 # Pip not needed for releases
 #RUN wget -q -O - https://raw.github.com/pypa/pip/master/contrib/get-pip.py | $PYTHON
@@ -64,4 +64,4 @@ RUN xvfb-run -a wine nsis.exe /S
 ADD ./helpers/build-binary /usr/bin/build-binary
 
 # Clean up stale wine processes
-RUN rm -rf /opt/.wine-*
+RUN rm -rf /tmp/.wine-*
