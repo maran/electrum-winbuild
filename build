@@ -1,6 +1,6 @@
 #!/bin/bash -l
 function buildBinary(){
-  docker.io run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
+  $DOCKERBIN run -v $(pwd)/source:/opt/wine-electrum/drive_c/electrum/ electrum-winbuild bash -c 'cd /opt/wine-electrum/drive_c/electrum/Electrum-'$VERSION' && $PYTHON "C:/PyInstaller/pyinstaller.py" -y "C:/electrum/deterministic.spec"'
   if [[ $? = 0 ]]; then
     echo "Build successful."
   else
@@ -14,7 +14,7 @@ function buildBinary(){
 
 function buildImage(){
   echo "Building image"
-  docker.io build -t electrum-winbuild .
+  $DOCKERBIN build -t electrum-winbuild .
 }
 
 function prepareFile(){
