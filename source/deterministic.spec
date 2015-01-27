@@ -6,7 +6,7 @@ a = Analysis(['electrum', 'gui/qt/main_window.py', 'gui/qt/lite_window.py', 'gui
               'lib/bitcoin.py'
               ],
              hiddenimports=["lib","gui"],
-             pathex=['lib:gui:plugins'],
+             pathex=['lib:gui:plugins:packages'],
              hookspath=None)
 
 ##### include mydir in distribution #######
